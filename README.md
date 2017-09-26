@@ -11,7 +11,7 @@ layer/DivLayer.js
 ![demo picture](https://github.com/Baozi926/DivLayer/blob/master/echarts.png?raw=true)
 
 demo 的gif
-![demo picture](https://github.com/Baozi926/DivLayer/blob/master/echartLayer2.gif?raw=true)
+![demo picture](https://github.com/Baozi926/DivLayer/blob/master/echartLayer.gif?raw=true)
 
 
 # English
