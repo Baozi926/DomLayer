@@ -1,6 +1,6 @@
 # DivLayer
 
-#中文
+# 中文
 
 layer/DivLayer.js
 
@@ -14,7 +14,7 @@ demo 的gif
 ![demo picture](https://github.com/Baozi926/DivLayer/blob/master/echartLayer.gif?raw=true)
 
 
-#English
+# English
 
 a moving div layer based on arcgis JavaScript api 4
 
