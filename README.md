@@ -1,8 +1,8 @@
 # DivLayer
-
+layer/DivLayer.js
 # 中文
 
-layer/DivLayer.js
+
 
 基于arcgis JavaScript api 4 实现的 div图层，实现可跟随地图移动的div，
 
