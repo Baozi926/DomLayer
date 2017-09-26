@@ -12,7 +12,7 @@ define([
   'dojo/dom-geometry',
   'esri/geometry/geometryEngine',
   'core/css!./DivLayer.css'
-], function (declare, domClass, domStyle, Deferred, Evented, Layer, domConstruct, lang, arrayUtil, on, domGeometry,geometryEngine) {
+], function (declare, domClass, domStyle, Deferred, Evented, Layer, domConstruct, lang, arrayUtil, on, domGeometry, geometryEngine) {
 
   var _id = 0;
 
@@ -67,16 +67,22 @@ define([
 
       this
         .events
-        .push(on(this._mapView, 'resize', lang.hitch(this, this.refresh,true)));
+        .push(on(this._mapView, 'resize', lang.hitch(this, this.refresh, true)));
 
       this
         .events
         .push(this._mapView.watch("animation", lang.hitch(this, function (response) {
           if (response && response.state === "running") {
-            domStyle.set(this._displayDiv, 'opacity', 0.5);
+            // domStyle.set(this._displayDiv, 'opacity', 0.5);
+            domClass.add(this._displayDiv, 'zooming');
           } else {
-            domStyle.set(this._displayDiv, 'opacity', 1);
-            this.refresh(true);
+            // domStyle.set(this._displayDiv, 'opacity', 1);
+            domClass.remove(this._displayDiv, 'zooming');
+
+            //解决缩放后，再第一次移动时会抖动的bug
+            setTimeout(lang.hitch(this, function () {
+              this.refresh(true);
+            }), 30);
           }
         })));
 
@@ -88,12 +94,16 @@ define([
             var dx = evt.x - this._startDragPosition.x;
             var dy = evt.y - this._startDragPosition.y;
 
+            /** 针对不支持 tranfrom 的浏览器有效
             arrayUtil.forEach(this.divs, function (v) {
               domStyle.set(v.node, {
                 top: parseFloat(v.top + dy) + 'px',
                 left: parseFloat(v.left + dx) + 'px'
               });
             }, this);
+            */
+            var translate = 'translate(' + dx + 'px,' + dy + 'px)';
+            domStyle.set(this._displayDiv, 'transform', translate)
 
           }
 
@@ -104,6 +114,7 @@ define([
 
           if (evt.action === 'end') {
             this._startDragPosition = null;
+            domStyle.set(this._displayDiv, 'transform', 'translate(0px,0px)')
             this.refresh();
           }
         })));
@@ -118,22 +129,26 @@ define([
     },
 
     divs: [],
-    checkInExtent:function(ele){
+    checkInExtent: function (ele) {
 
-      return geometryEngine.contains(this._mapView.extent.expand(1.2),ele.geometry);
+      return geometryEngine.contains(this._mapView.extent.expand(1.2), ele.geometry);
     },
 
     refresh: function (ifZoomEnd) {
-     
+      if (ifZoomEnd) {
+        domClass.add(this._displayDiv, 'init');
+      }
+
       domConstruct.empty(this._displayDiv);
       arrayUtil.forEach(this.divs, function (v) {
-        if(this.checkInExtent(v)){
-          this._add(v,ifZoomEnd);
+        if (this.checkInExtent(v)) {
+          this._add(v, ifZoomEnd);
         }
       }, this);
+      domClass.remove(this._displayDiv, 'init');
     },
 
-    _add: function (ele,ifZoomEnd) {
+    _add: function (ele, ifZoomEnd) {
 
       if (lang.isString(ele.html)) {
         ele.node = domConstruct.create('div', {
@@ -147,13 +162,15 @@ define([
         domConstruct.place(ele.html, ele.node);
       }
 
-      this.reposition(ele);
-      if(ifZoomEnd&&ele.afterZoom&&lang.isFunction(ele.afterZoom)){
+      this.reposition(ele, ifZoomEnd);
+
+      //可以看出，若ele.geometry并不在地图范围内，即div显示在地图外，afterZoom不会触发
+      if (ifZoomEnd && ele.afterZoom && lang.isFunction(ele.afterZoom)) {
         ele.afterZoom(this);
       }
     },
 
-    reposition: function (ele) {
+    reposition: function (ele, ifZoomEnd) {
       if (this._mapView) {
         var sp = this
           ._mapView

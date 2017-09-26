@@ -1,3 +1,17 @@
-.div-layer{
-  
+.div-layer div {
+  /* transform: translate(-50%, -50%); */
+  transition: transform 0.3s ease;
+  transition: opacity 0.5s ease;
+}
+
+.div-layer.init div {
+  opacity: 0.1
+  /* transform: scale(0.95) */
+}
+
+.div-layer.zooming div {
+  /* opacity: 0.5; */
+  /* display: none; */
+  transform: scale(0.95);
+  opacity: 0
 }
