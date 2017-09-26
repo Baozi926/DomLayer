@@ -1,6 +1,9 @@
 # DivLayer
-layer/DivLayer.js
-# 中文
+[DEMO](http://47.91.224.241:3000/DivLayer/)
+
+
+文件位置：layer/DivLayer.js
+## 中文
 
 
 
@@ -14,7 +17,7 @@ demo 的gif
 ![demo picture](https://github.com/Baozi926/DivLayer/blob/master/echartLayer.gif?raw=true)
 
 
-# English
+## English
 
 a moving div layer based on arcgis JavaScript api 4
 
