@@ -18,4 +18,4 @@ demo 的gif
 
 a moving div layer based on arcgis JavaScript api 4
 
-so we also can put echarts into div to make this layer a echart layer. see the screenshot shown above. 
+we also can put echarts into div to make this layer a echart layer. see the screenshot shown above. 
