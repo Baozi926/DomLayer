@@ -1,5 +1,5 @@
 # DivLayer
-[DEMO](http://47.91.224.241:3000/DivLayer/)
+[DEMO](http://47.91.224.241:8080/DivLayer/)
 
 
 文件位置：layer/DivLayer.js
