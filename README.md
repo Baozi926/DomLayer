@@ -20,7 +20,8 @@
 
         //创建一个divlayer
         var divlayer = new DivLayer({
-           direction:'center' //div的摆放位置，还可以是'bottom-right','top-mid',可在源码的_repositionForDirection方法中添加自己想要的情况
+           direction:'center' //div的摆放位置，还可以是'bottom-right','top-mid',
+                              //也可在源码的_repositionForDirection方法中添加自己想要的情况
         });
         //将divlayer加入地图
         view
