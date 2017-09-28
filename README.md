@@ -7,7 +7,11 @@
 基于arcgis JavaScript api 4 实现的 div图层，实现可跟随地图移动的div，
 ## 使用方法
 ```javascript 
+   
+
+   
     //生成地图
+    map = new Map({basemap: "streets"});
     view = new MapView({
         container: "mapishere", // Reference to the scene div created in step 5
         map: map, // Reference to the map object created before the scene
