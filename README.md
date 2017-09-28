@@ -36,12 +36,12 @@
         var option = {
         
         };
-        window.myChart = echarts.init(echartNode);
+        var myChart = echarts.init(echartNode);
         myChart.setOption(option);
         
         
         //将div加入到图层中
-        test.add({
+        divlayer.add({
             html: echartNode, //div，也可以是一个htmlString
             geometry: new Point({x: 1645332.5128478184, y: 7320152.631188956}) //加入的位置
         });
