@@ -19,7 +19,9 @@
         console.log('view loaded');
 
         //创建一个divlayer
-        var divlayer = new DivLayer();
+        var divlayer = new DivLayer({
+           direction:'center' //div的摆放位置，还可以是'bottom-right','top-mid',可在源码的_repositionForDirection方法中添加自己想要的情况
+        });
         //将divlayer加入地图
         view
             .map
