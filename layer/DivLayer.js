@@ -20,16 +20,15 @@ define([
 
     constructor: function (options) {
       options = options || {};
-
-      this.divLayerClass = options.divLayerClass || 'div-layer';
+      this.divLayerClass = 'div-layer';
       this.popupEnabled = false;
       this.legendEnabled = false;
-
+      this.direction= options.direction;
     },
 
     onMouseDrag: function (a) {},
     DIRECTION: [
-      'bottom-right', 'top-mid', 'center'
+      'bottom-right', 'top-mid', 'center'//可选的direct
     ],
     direction: 'center',
 
@@ -128,19 +127,19 @@ define([
       return this;
     },
 
-    divs: [],
+    items: [],
     checkInExtent: function (ele) {
-
       return geometryEngine.contains(this._mapView.extent.expand(1.2), ele.geometry);
     },
 
     refresh: function (ifZoomEnd) {
+
       if (ifZoomEnd) {
         domClass.add(this._displayDiv, 'init');
       }
 
       domConstruct.empty(this._displayDiv);
-      arrayUtil.forEach(this.divs, function (v) {
+      arrayUtil.forEach(this.items, function (v) {
         if (this.checkInExtent(v)) {
           this._add(v, ifZoomEnd);
         }
@@ -171,6 +170,7 @@ define([
     },
 
     reposition: function (ele, ifZoomEnd) {
+      
       if (this._mapView) {
         var sp = this
           ._mapView
@@ -181,6 +181,7 @@ define([
           top: sp.y + 'px',
           left: sp.x + 'px'
         });
+        console.log(sp.x,sp.y)
 
         ele.left = sp.x;
         ele.top = sp.y;
@@ -223,6 +224,7 @@ define([
           .forEach(ele, function (v) {
             this.add(v);
           }, this);
+        return;
       }
 
       ele = ele || {};
@@ -235,7 +237,7 @@ define([
       lang.mixin(defaults, ele);
       this._add(defaults);
       this
-        .divs
+        .items
         .push(defaults);
     },
 
@@ -246,24 +248,23 @@ define([
           .forEach(ele, function (v) {
             this.remove(v);
           }, this);
+        return;
       }
 
-      this.divs = arrayUtil.filter(this.divs, function (v) {
+      this.items = arrayUtil.filter(this.items, function (v) {
         return ele != v;
       }, this);
       this.refresh();
     },
 
     removeAll: function () {
-      this.divs.length = 0;
+      this.items.length = 0;
       this.refresh();
     },
 
     destroy: function (evt) {
-
-      this.divs = null;
+      this.items = null;
       domConstruct.destroy(this._displayDiv);
-
     }
 
   });

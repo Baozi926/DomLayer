@@ -4,7 +4,7 @@
 
 文件位置：layer/DivLayer.js
 ## 中文
-基于arcgis JavaScript api 4 实现的 div图层，实现可跟随地图移动的div，
+基于arcgis JavaScript api 4.7 实现的 div图层，实现可跟随地图移动的div
 ## 使用方法
 ```javascript 
    

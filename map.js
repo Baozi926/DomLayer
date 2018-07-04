@@ -42,7 +42,8 @@ require([
         center: [15, 65]
     });
 
-    view.then(function () {
+    view.when(function () {
+        debugger
         console.log('view loaded');
 
         test = new DivLayer();
@@ -115,7 +116,7 @@ require([
 
         test.add({
             html: echartNode2,
-            geometry: new Point({x: 1645332.5128478184, y: 7320152.631188956})
+            geometry: new Point({x: 6861195.48427877, y: 4941642.924353667,spatialReference:view.spatialReference})
         });
 
         var echartNode3 = domConstruct.create('div', {style: 'height:150px;width:260px'});
@@ -124,7 +125,7 @@ require([
 
         test.add({
             html: echartNode3,
-            geometry: new Point({x: 3690175.8935323115, y: 7798342.680140892}),
+            geometry: new Point({x: 3690175.8935323115, y: 7798342.680140892,spatialReference:view.spatialReference}),
             afterZoom:function(){
               console.log('asdasd');
             }
