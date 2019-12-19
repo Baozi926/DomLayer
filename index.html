@@ -1,33 +1,54 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DivLayer</title>
 
     <style>
-        html, body, #mapishere {
-                height:100%;
-                border: 0;
-                margin: 0;
+      html,
+      body,
+      #mapishere {
+        height: 100%;
+        border: 0;
+        margin: 0;
+      }
 
-        }
+      .chm-marker {
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 2px;
+        padding: 5px;
+      }
+      .chm-marker .title {
+        font-weight: bolder;
+        margin: 0;
+        color: green;
+        border-bottom: solid 1.5px;
+      }
+      .chm-marker .content {
+        /* font-weight: bolder; */
+        margin: 0;
+        color: 564949;
+      }
     </style>
-</head>
+  </head>
 
-<body class="menushow">
-
-        <div id="mapishere" class="mapishere"></div>
-        <script type="text/javascript" src="libs/echarts.min.js"></script>
+  <body class="menushow">
+    <div id="mapishere" class="mapishere"></div>
+    <script type="text/javascript" src="libs/echarts.min.js"></script>
+    <script type="text/javascript" src="libs/rbush.js"></script>
     <script type="text/javascript" src="dojoConfig.js"></script>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.7/esri/css/main.css">
-    <script src="https://js.arcgis.com/4.7/"></script>
-    <!-- <link rel="stylesheet" href="http://127.0.0.1:8080/arcgis_js_v43_api/arcgis_js_api/library/4.3/4.3/esri/css/main.css">
-    <script src="http://127.0.0.1:8080/arcgis_js_v43_api/arcgis_js_api/library/4.3/4.3/init.js"></script> -->
+    <script
+      type="text/javascript"
+      src="data/natural_earth_data/all.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.13/esri/css/main.css"
+    />
+    <script src="https://js.arcgis.com/4.13/"></script>
 
     <script src="map.js"></script>
-</body>
-
+  </body>
 </html>
