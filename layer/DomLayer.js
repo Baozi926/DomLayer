@@ -27,8 +27,6 @@ define([
   geometryEngine,
   watchUtils
 ) {
-  // var _id = 0;
-
   var clazz = Layer.createSubclass([], {
     constructor: function(options) {
       options = options || {};
@@ -44,11 +42,7 @@ define([
       });
     },
 
-    DIRECTION: [
-      'bottom-right',
-      'top-mid',
-      'center' //可选的direct
-    ],
+    DIRECTION: ['bottom-right', 'top-mid', 'center'],
     direction: 'center',
 
     declaredClass: 'caihm.DivLayer',
@@ -180,7 +174,10 @@ define([
               notAdded = false;
               this._add(v);
               var box = this.getDomBox(v.node);
+
               v.box = box;
+              domStyle.set(v.node, 'height', v.box.height + 'px');
+              domStyle.set(v.node, 'width', v.box.width + 'px');
             }
 
             var find = rbush.search(v.box);
@@ -192,6 +189,8 @@ define([
               rbush.insert(v.box);
               if (notAdded) {
                 this._add(v);
+                domStyle.set(v.node, 'height', v.box.height + 'px');
+                domStyle.set(v.node, 'width', v.box.width + 'px');
               }
 
               // domStyle.set(v.node, 'display', 'block');
