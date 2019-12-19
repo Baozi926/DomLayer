@@ -10,7 +10,7 @@
 
 ## English
 
-inspired by Leaflet.LayerGroup.Collision
+inspired by Leaflet.LayerGroup.Collision and leaflet iconlayer
 
 based on arcgis javascript 4.13 api
 

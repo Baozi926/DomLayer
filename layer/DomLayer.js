@@ -37,7 +37,7 @@ define([
       this._displayDiv = domConstruct.create('div', {
         innerHTML: '',
         style:
-          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;transition:opacity 0.3s',
+          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;',
         className: this.divLayerClass
       });
     },
@@ -93,6 +93,23 @@ define([
       //   )
       // );
 
+      // this.events.push(
+      //   this._mapView.watch(
+      //     'animation',
+      //     function(response) {
+      //       if (response && response.state === 'running') {
+      //         // console.log('Animation in progress');
+      //         // if
+      //         if (!this._mapView.interacting) {
+      //           this.refresh();
+      //         }
+      //       } else {
+      //         console.log('No animation');
+      //       }
+      //     }.bind(this)
+      //   )
+      // );
+
       this.events.push(
         watchUtils.pausable(
           this._mapView,
@@ -114,12 +131,16 @@ define([
           'drag',
           lang.hitch(this, function(evt) {
             if (evt.action === 'start') {
+              this.isMapPanning = true;
               this._startDragPosition = evt;
               this.calcTransform();
               evt.x = evt.x - this.transformOffset.x;
               evt.y = evt.y - this.transformOffset.y;
+              // domClass.add(this._displayDiv, 'dragging');
             } else if (evt.action === 'end') {
               console.log('drag end');
+              // domClass.remove(this._displayDiv, 'dragging'); 
+              this.isMapPanning = false;
             } else {
               if (this._startDragPosition) {
                 var dx = evt.x - this._startDragPosition.x;
@@ -131,6 +152,27 @@ define([
           })
         )
       );
+
+      // var func = window._.throttle(
+      //   function() {
+      //     if (!this.isMapPanning) {
+      //       this.refresh();
+      //     }
+      //   },
+      //   300,
+      //   {
+      //     leading: true,
+      //     trailing: false
+      //   }
+      // );
+
+      // this.events.push(
+      //   this._mapView.watch(
+      //     'viewpoint',
+
+      //     func.bind(this)
+      //   )
+      // );
     },
 
     destroyLayerView: function(param) {

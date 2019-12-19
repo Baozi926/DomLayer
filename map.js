@@ -56,7 +56,7 @@ require([
 
   view.when(function() {
     console.log('view loaded');
-
+    view.navigation.gamepad.enabled = false;
     test = new DivLayer();
 
     view.map.add(test);
@@ -103,6 +103,5 @@ require([
         })
       );
     });
-
   });
 });
