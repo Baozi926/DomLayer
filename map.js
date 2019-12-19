@@ -50,7 +50,7 @@ require([
   view = new MapView({
     container: 'mapishere', // Reference to the scene div created in step 5
     map: map, // Reference to the map object created before the scene
-    zoom: 4, // Sets zoom level based on level of detail (LOD)
+    zoom: 6, // Sets zoom level based on level of detail (LOD)
     center: [15, 65]
   });
 
@@ -104,46 +104,5 @@ require([
       );
     });
 
-    // var points = [
-    //   new Point({
-    //     x: 6861195.48427877,
-    //     y: 4941642.924353667,
-    //     spatialReference: view.spatialReference
-    //   }),
-    //   new Point({
-    //     x: 3690175.8935323115,
-    //     y: 7798342.680140892,
-    //     spatialReference: view.spatialReference
-    //   }),
-    //   view.extent.center.clone()
-    // ];
-
-    // points.forEach(point => {
-    //   var dom = domConstruct.create('div', {
-    //     style: 'height:60px;width:150px;background-color:red;opacity:0.5'
-    //   });
-
-    //   test.add({
-    //     dom: dom,
-    //     geometry: point
-    //   });
-
-    //   view.graphics.add(
-    //     new Graphic({
-    //       geometry: point,
-    //       symbol: {
-    //         type: 'simple-marker', // autocasts as new SimpleMarkerSymbol()
-    //         style: 'square',
-    //         color: 'blue',
-    //         size: '8px', // pixels
-    //         outline: {
-    //           // autocasts as new SimpleLineSymbol()
-    //           color: [255, 255, 0],
-    //           width: 3 // points
-    //         }
-    //       }
-    //     })
-    //   );
-    // });
   });
 });

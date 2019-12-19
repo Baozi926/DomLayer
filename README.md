@@ -1,5 +1,5 @@
-<!-- # DivLayer 只适用于 arcgis JavaScript api 4.3
-[在线访问(DEMO)](http://47.91.224.241:8080/DivLayer/) -->
+# DivLayer 
+[在线访问(DEMO)](https://baozi926.github.io/DomLayer/)
 
 ## 中文
 
