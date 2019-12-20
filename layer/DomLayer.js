@@ -109,6 +109,9 @@ define([
       //     }.bind(this)
       //   )
       // );
+      var viewpointWatcher = null;
+      var screenTargetGeoemtry;
+      var dragStartCenter;
 
       this.events.push(
         watchUtils.pausable(
@@ -116,6 +119,10 @@ define([
           'stationary',
           (isStationary, b, c, view) => {
             if (isStationary) {
+              if (viewpointWatcher) {
+                viewpointWatcher.remove();
+                viewpointWatcher = null;
+              }
               console.log('map stationary');
               this.refresh();
               // domStyle.set(this._displayDiv, 'opacity', 1);
@@ -126,45 +133,67 @@ define([
         )
       );
 
+      var func = window._.throttle(
+        function() {
+          if (!this.isMapPanning) {
+            this.refresh();
+          }
+        },
+        300,
+        {
+          leading: true,
+          trailing: false
+        }
+      );
+
       this.events.push(
         this._mapView.on(
           'drag',
           lang.hitch(this, function(evt) {
             if (evt.action === 'start') {
-              this.isMapPanning = true;
-              this._startDragPosition = evt;
+              domClass.add(this._displayDiv, 'dragging');
+              console.log('drag start');
+              if (viewpointWatcher) {
+                viewpointWatcher.remove();
+              }
+
               this.calcTransform();
-              evt.x = evt.x - this.transformOffset.x;
-              evt.y = evt.y - this.transformOffset.y;
-              // domClass.add(this._displayDiv, 'dragging');
+              dragStartCenter = this._mapView.center.clone();
+              screenTargetGeoemtry = this._mapView.toScreen(dragStartCenter);
+
+              screenTargetGeoemtry = {
+                x: screenTargetGeoemtry.x - this.transformOffset.x,
+                y: screenTargetGeoemtry.y - this.transformOffset.y
+              };
+              viewpointWatcher = this._mapView.watch(
+                'viewpoint',
+                window._.throttle(
+                  function(evt) {
+                    var currentScreenTarget = this._mapView.toScreen(
+                      dragStartCenter
+                    );
+
+                    if (screenTargetGeoemtry) {
+                      var dx = currentScreenTarget.x - screenTargetGeoemtry.x;
+                      var dy = currentScreenTarget.y - screenTargetGeoemtry.y;
+                      var translate = 'translate(' + dx + 'px,' + dy + 'px)';
+
+                      domStyle.set(this._displayDiv, 'transform', translate);
+                    }
+                  }.bind(this),
+                  10
+                )
+              );
+
+              this.isMapPanning = true;
             } else if (evt.action === 'end') {
               console.log('drag end');
-              // domClass.remove(this._displayDiv, 'dragging'); 
+              domClass.remove(this._displayDiv, 'dragging');
               this.isMapPanning = false;
-            } else {
-              if (this._startDragPosition) {
-                var dx = evt.x - this._startDragPosition.x;
-                var dy = evt.y - this._startDragPosition.y;
-                var translate = 'translate(' + dx + 'px,' + dy + 'px)';
-                domStyle.set(this._displayDiv, 'transform', translate);
-              }
             }
           })
         )
       );
-
-      // var func = window._.throttle(
-      //   function() {
-      //     if (!this.isMapPanning) {
-      //       this.refresh();
-      //     }
-      //   },
-      //   300,
-      //   {
-      //     leading: true,
-      //     trailing: false
-      //   }
-      // );
 
       // this.events.push(
       //   this._mapView.watch(
