@@ -1,5 +1,5 @@
-# DivLayer 
-[在线访问(DEMO)](https://baozi926.github.io/DomLayer/)
+# DomLayer 
+[(DEMO)](https://baozi926.github.io/DomLayer/)
 
 ## 中文
 
