@@ -37,7 +37,7 @@ define([
       this._displayDiv = domConstruct.create('div', {
         innerHTML: '',
         style:
-          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;',
+          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;transition:opacity 0.1s',
         className: this.divLayerClass
       });
     },
