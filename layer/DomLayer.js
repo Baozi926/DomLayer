@@ -82,16 +82,9 @@ define([
     bindEvents: function() {
       this.events = [];
 
-      // this.events.push(
-      //   on(
-      //     this._mapView,
-      //     'resize',
-      //     lang.hitch(this, function() {
-      //       console.log('map resize');
-      //       this.refresh();
-      //     })
-      //   )
-      // );
+      var viewpointWatcher = null;
+      var screenTargetGeoemtry;
+      var dragStartCenter;
 
       this.events.push(
         watchUtils.pausable(
@@ -100,14 +93,76 @@ define([
           (isStationary, b, c, view) => {
             if (isStationary) {
               console.log('map stationary');
-              this.refresh();
-              domClass.remove(this._displayDiv, 'not-stationary');
+              window.requestAnimationFrame(()=>{
+                this.refresh();
+              })
+     
               // domStyle.set(this._displayDiv, 'opacity', 1);
             } else {
               domClass.add(this._displayDiv, 'not-stationary');
               // domStyle.set(this._displayDiv, 'opacity', 0);
             }
           }
+        )
+      );
+
+      this.events.push(
+        this._mapView.on(
+          'drag',
+          lang.hitch(this, function(evt) {
+            if (evt.action === 'start') {
+              domClass.add(this._displayDiv, 'dragging');
+              console.log('drag start');
+              if (viewpointWatcher) {
+                viewpointWatcher.remove();
+              }
+
+              this.calcTransform();
+              dragStartCenter = this._mapView.center.clone();
+              screenTargetGeoemtry = this._mapView.toScreen(dragStartCenter);
+
+              screenTargetGeoemtry = {
+                x: screenTargetGeoemtry.x - this.transformOffset.x,
+                y: screenTargetGeoemtry.y - this.transformOffset.y
+              };
+
+              var calculating = false;
+
+              viewpointWatcher = this._mapView.watch(
+                'viewpoint',
+
+                function(evt) {
+                  if (calculating) {
+                    return;
+                  }
+                  calculating = true;
+                  window.requestAnimationFrame(
+                    function() {
+                      // make this calculation faster
+                      var currentScreenTarget = this._mapView.toScreen(
+                        dragStartCenter
+                      );
+
+                      if (screenTargetGeoemtry) {
+                        var dx = currentScreenTarget.x - screenTargetGeoemtry.x;
+                        var dy = currentScreenTarget.y - screenTargetGeoemtry.y;
+                        var translate = 'translate(' + dx + 'px,' + dy + 'px)';
+
+                        domStyle.set(this._displayDiv, 'transform', translate);
+                      }
+                      calculating = false;
+                    }.bind(this)
+                  );
+                }.bind(this)
+              );
+
+              this.isMapPanning = true;
+            } else if (evt.action === 'end') {
+              console.log('drag end');
+              // domClass.remove(this._displayDiv, 'dragging');
+              this.isMapPanning = false;
+            }
+          })
         )
       );
 
