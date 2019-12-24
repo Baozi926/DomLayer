@@ -56,7 +56,7 @@ define([
 
       if (view.type === '3d') {
         // alert('not implemented for 3d');
-        console.log('has performance issue on 3d')
+        console.log('has performance issue on 3d');
         // this.refresh()
       }
     },
@@ -81,10 +81,21 @@ define([
       return this.transformOffset;
     },
 
+    clearViewpointWatchers: function() {
+      while (this.viewpointWatchers.length) {
+        var viewpointWatcher = this.viewpointWatchers.pop();
+        if (viewpointWatcher) {
+          viewpointWatcher.remove();
+          viewpointWatcher = null;
+        }
+      }
+    },
+
     bindEvents: function() {
       this.events = [];
+      this.viewpointWatchers = [];
 
-      var viewpointWatcher = null;
+
       var screenTargetGeoemtry;
       var dragStartCenter;
 
@@ -94,10 +105,7 @@ define([
           'stationary',
           (isStationary, b, c, view) => {
             if (isStationary) {
-              if (viewpointWatcher) {
-                viewpointWatcher.remove();
-                viewpointWatcher = null;
-              }
+              this.clearViewpointWatchers();
               console.log('map stationary');
               window.requestAnimationFrame(() => {
                 this.refresh();
@@ -119,9 +127,8 @@ define([
             if (evt.action === 'start') {
               domClass.add(this._displayDiv, 'dragging');
               console.log('drag start');
-              if (viewpointWatcher) {
-                viewpointWatcher.remove();
-              }
+         
+              this.clearViewpointWatchers();
 
               this.calcTransform();
               dragStartCenter = this._mapView.center.clone();
@@ -134,7 +141,7 @@ define([
 
               var calculating = false;
 
-              viewpointWatcher = this._mapView.watch(
+              var viewpointWatcher = this._mapView.watch(
                 'viewpoint',
 
                 function(evt) {
@@ -162,19 +169,18 @@ define([
                 }.bind(this)
               );
 
+              this.viewpointWatchers.push(viewpointWatcher);
+
               this.isMapPanning = true;
             } else if (evt.action === 'end') {
               console.log('drag end');
               domClass.remove(this._displayDiv, 'dragging');
               this.isMapPanning = false;
-              // if (viewpointWatcher) {
-              //   viewpointWatcher.remove();
-              // }
+        
             }
           })
         )
       );
-
     },
 
     destroyLayerView: function(param) {
@@ -297,8 +303,6 @@ define([
       }
 
       this.reposition(ele);
-
- 
     },
 
     getPosition(ele) {
