@@ -37,7 +37,7 @@ define([
       this._displayDiv = domConstruct.create('div', {
         innerHTML: '',
         style:
-          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;transition:opacity 0.01s;overflow:hidden',
+          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;',
         className: this.divLayerClass
       });
     },
@@ -92,6 +92,10 @@ define([
           'stationary',
           (isStationary, b, c, view) => {
             if (isStationary) {
+              if (viewpointWatcher) {
+                viewpointWatcher.remove();
+                viewpointWatcher = null;
+              }
               console.log('map stationary');
               window.requestAnimationFrame(() => {
                 this.refresh();
@@ -161,39 +165,14 @@ define([
               console.log('drag end');
               domClass.remove(this._displayDiv, 'dragging');
               this.isMapPanning = false;
-              if (viewpointWatcher) {
-                viewpointWatcher.remove();
-              }
+              // if (viewpointWatcher) {
+              //   viewpointWatcher.remove();
+              // }
             }
           })
         )
       );
 
-      // this.events.push(
-      //   this._mapView.on(
-      //     'drag',
-      //     lang.hitch(this, function(evt) {
-      //       if (evt.action === 'start') {
-      //         this._startDragPosition = evt;
-      //         this.calcTransform();
-      //         evt.x = evt.x - this.transformOffset.x;
-      //         evt.y = evt.y - this.transformOffset.y;
-      //         domClass.add(this._displayDiv,'dragging')
-      //       } else if (evt.action === 'end') {
-      //         console.log('drag end');
-      //         domClass.remove(this._displayDiv,'dragging')
-      //       } else {
-
-      //         if (this._startDragPosition) {
-      //           var dx = evt.x - this._startDragPosition.x;
-      //           var dy = evt.y - this._startDragPosition.y;
-      //           var translate = 'translate(' + dx + 'px,' + dy + 'px)';
-      //           domStyle.set(this._displayDiv, 'transform', translate);
-      //         }
-      //       }
-      //     })
-      //   )
-      // );
     },
 
     destroyLayerView: function(param) {
