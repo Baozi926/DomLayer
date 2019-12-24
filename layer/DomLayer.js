@@ -161,6 +161,9 @@ define([
               console.log('drag end');
               domClass.remove(this._displayDiv, 'dragging');
               this.isMapPanning = false;
+              if (viewpointWatcher) {
+                viewpointWatcher.remove();
+              }
             }
           })
         )
