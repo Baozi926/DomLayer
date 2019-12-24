@@ -5,7 +5,7 @@
 
 由leaflet的Leaflet.LayerGroup.Collision而启发
 
-基于arcgis JavaScript api 4.13 实现的 div图层，实现可跟随地图移动的dom
+基于arcgis JavaScript api 4.13 实现的 div图层，实现可跟随地图移动的dom，因为是基于dom实现，所以相比arcgis JavaScript api自带的图层，这个跟灵活。可添加css样式和鼠标事件。
 
 文件位置：layer/DomLayer.js
 
