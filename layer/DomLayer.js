@@ -37,7 +37,7 @@ define([
       this._displayDiv = domConstruct.create('div', {
         innerHTML: '',
         style:
-          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;transition:opacity 0.01s',
+          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;transition:opacity 0.01s;overflow:hidden',
         className: this.divLayerClass
       });
     },
@@ -93,13 +93,13 @@ define([
           (isStationary, b, c, view) => {
             if (isStationary) {
               console.log('map stationary');
-              window.requestAnimationFrame(()=>{
+              window.requestAnimationFrame(() => {
                 this.refresh();
-              })
-     
+              });
+
               // domStyle.set(this._displayDiv, 'opacity', 1);
             } else {
-              domClass.add(this._displayDiv, 'not-stationary');
+              // domClass.add(this._displayDiv, 'not-stationary');
               // domStyle.set(this._displayDiv, 'opacity', 0);
             }
           }
@@ -159,7 +159,7 @@ define([
               this.isMapPanning = true;
             } else if (evt.action === 'end') {
               console.log('drag end');
-              // domClass.remove(this._displayDiv, 'dragging');
+              domClass.remove(this._displayDiv, 'dragging');
               this.isMapPanning = false;
             }
           })
