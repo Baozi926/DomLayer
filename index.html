@@ -23,12 +23,24 @@
         background-color: rgba(255, 255, 255, 0.8);
         border-radius: 2px;
         padding: 5px;
+        transition: transform 0.3s;
+        transform-origin: left bottom;
       }
       .chm-marker .title {
         font-weight: bolder;
         margin: 0;
         color: green;
         border-bottom: solid 1.5px;
+      }
+      .chm-marker:hover {
+        /* color: red; */
+        transform: scale(1.2);
+        z-index: 99;
+      }
+
+      .chm-marker:hover .title {
+        color: red;
+        /* transform: scale(1.2); */
       }
       .chm-marker .content {
         /* font-weight: bolder; */
