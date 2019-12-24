@@ -10,15 +10,15 @@ window.dojoConfig = {
   packages: [
     {
       name: 'widgets',
-      location: locationPath + 'widgets'
+      location: locationPath + '/widgets'
     },
     {
       name: 'core',
-      location: locationPath + 'core'
+      location: locationPath + '/core'
     },
     {
       name: 'layer',
-      location: locationPath + 'layer'
+      location: locationPath + '/layer'
     }
   ]
 };

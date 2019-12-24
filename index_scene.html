@@ -56,7 +56,7 @@
 
     <script>
       /**
-       * Created by Caihm on 2017/5/10.
+       * Created by Caihm on 2019/12/24.
        */
 
       var map;
@@ -72,7 +72,7 @@
         'dojo/on',
         'dojo/_base/lang',
         'esri/Map',
-        'esri/views/MapView',
+        'esri/views/SceneView',
         'esri/request',
         'esri/geometry/Point',
         'esri/symbols/SimpleMarkerSymbol',
@@ -91,7 +91,7 @@
         on,
         lang,
         Map,
-        MapView,
+        SceneView,
         esriRequest,
         Point,
         SimpleMarkerSymbol,
@@ -104,7 +104,7 @@
         DivLayer
       ) {
         map = new Map({ basemap: 'streets' });
-        view = new MapView({
+        view = new SceneView({
           container: 'mapishere', // Reference to the scene div created in step 5
           map: map, // Reference to the map object created before the scene
           zoom: 6, // Sets zoom level based on level of detail (LOD)

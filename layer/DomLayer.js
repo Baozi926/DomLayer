@@ -55,7 +55,9 @@ define([
       this.bindEvents();
 
       if (view.type === '3d') {
-        alert('not implemented for 3d');
+        // alert('not implemented for 3d');
+        console.log('has performance issue on 3d')
+        // this.refresh()
       }
     },
 
@@ -191,7 +193,7 @@ define([
     refresh: function() {
       var rbush = new window.rbush();
       this.calcTransform();
-      console.time('refresh');
+      console.time('refresh-domLayer');
       // domConstruct.empty(this._displayDiv);
       arrayUtil.forEach(
         this.items,
@@ -250,7 +252,7 @@ define([
         this
       );
 
-      console.timeEnd('refresh');
+      console.timeEnd('refresh-domLayer');
     },
 
     getDomBox(dom) {
@@ -278,7 +280,7 @@ define([
             'div',
             {
               innerHTML: ele.dom,
-              style: 'position:absolute'
+              style: 'position:absolute;'
             },
             this._displayDiv
           );
@@ -286,7 +288,7 @@ define([
           ele.node = domConstruct.create(
             'div',
             {
-              style: 'position:absolute'
+              style: 'position:absolute;'
             },
             this._displayDiv
           );
@@ -296,9 +298,7 @@ define([
 
       this.reposition(ele);
 
-      // setTimeout(() => {
-      //   domStyle.set(ele.node, 'visibility', 'visible');
-      // }, 0);
+ 
     },
 
     getPosition(ele) {
