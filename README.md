@@ -9,7 +9,7 @@
 
 文件位置：layer/DomLayer.js
 
-当dom互相遮盖时，可以自动避让
+具有碰撞检测功能，当互相遮盖时可以自动避让
 
 
 
@@ -19,7 +19,9 @@ inspired by Leaflet.LayerGroup.Collision and leaflet iconlayer
 
 based on arcgis javascript 4.13 api
 
-a moving dom layer based on arcgis JavaScript api 4
+a moving dom layer based on arcgis JavaScript api 4 
+
+Collision Detection Enable
 
 file in layer/DomLayer.js
 
