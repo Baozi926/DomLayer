@@ -75,6 +75,7 @@
       var view;
       // var s;
       var test;
+      var testDomGraphics = [];
       // var layer;
 
       require([
@@ -148,10 +149,13 @@
               style: ''
             });
 
-            test.add({
+            var domGraphic = {
               dom: dom,
               geometry: point
-            });
+            };
+            testDomGraphics.push(domGraphic);
+
+            test.add(domGraphic);
 
             window.test = test;
 

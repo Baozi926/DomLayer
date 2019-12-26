@@ -41,9 +41,25 @@ define([
     constructor(param) {
       console.log(LayerView);
 
-      param.layer.on('after-add', function(param) {
-        this._add(param);
-      });
+      param.layer.on(
+        'after-add',
+        function(param) {
+          this._add(param.item);
+        }.bind(this)
+      );
+
+      param.layer.on(
+        'after-remove',
+        function(param) {
+          this._remove(param.item);
+        }.bind(this)
+      );
+    },
+
+    _remove(ele) {
+      if (ele.node) {
+        domConstruct.destroy(ele.node);
+      }
     },
     viewChange(evt) {
       //   console.log('viewChange', evt);
@@ -122,6 +138,7 @@ define([
       }
 
       this.reposition(ele);
+      this._repositionForDirection(ele);
     },
 
     bindEvents: function() {
@@ -240,9 +257,9 @@ define([
 
               // domStyle.set(v.node, 'display', 'block');
             }
-            if (v.node) {
-              this._repositionForDirection(v);
-            }
+            // if (v.node) {
+
+            // }
           } else {
             if (v.node) {
               domConstruct.destroy(v.node);

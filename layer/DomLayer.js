@@ -49,6 +49,13 @@ define([
           this.emit('after-add', param);
         }.bind(this)
       );
+
+      this.graphics.on(
+        'after-remove',
+        function(param) {
+          this.emit('after-remove', param);
+        }.bind(this)
+      );
     },
 
     DIRECTION: ['bottom-right', 'top-mid', 'center'],
@@ -92,26 +99,11 @@ define([
     },
     remove(graphic) {
       this.graphics.remove(graphic);
+    },
+
+    removeAll() {
+      this.graphics.removeAll();
     }
-
-    // remove: function(ele) {
-    //   this.items = arrayUtil.filter(
-    //     this.items,
-    //     function(v) {
-    //       var find = ele === v;
-    //       if (find) {
-    //         domConstruct.destroy(v.node);
-    //       }
-
-    //       return !find;
-    //     },
-    //     this
-    //   );
-    // },
-
-    // removeAll: function() {
-    //   alert('not  implemented');
-    // },
   });
 
   return clazz;
