@@ -11,8 +11,11 @@ define([
   'dojo/on',
   'dojo/dom-geometry',
   'esri/geometry/geometryEngine',
-  'esri/core/watchUtils'
+  'esri/core/watchUtils',
+
   // 'esri/widgets/support/AnchorElementViewModel'
+  './DomLayerView',
+  'esri/core/Collection'
 ], function(
   declare,
   domClass,
@@ -26,22 +29,26 @@ define([
   on,
   domGeometry,
   geometryEngine,
-  watchUtils
+  watchUtils,
+
+  DomLayerView,
+  Collection
   // AnchorElementViewModel
 ) {
   var clazz = Layer.createSubclass([], {
     constructor: function(options) {
       options = options || {};
-      this.divLayerClass = 'div-layer';
+      this.graphics = new Collection();
       this.popupEnabled = false;
       this.legendEnabled = false;
       this.direction = options.direction;
-      this._displayDiv = domConstruct.create('div', {
-        innerHTML: '',
-        style:
-          'width:100%;height:100%;position: absolute;top: 0px;right: 0px;left: 0px;bottom: 0px;',
-        className: this.divLayerClass
-      });
+
+      this.graphics.on(
+        'after-add',
+        function(param) {
+          this.emit('after-add', param);
+        }.bind(this)
+      );
     },
 
     DIRECTION: ['bottom-right', 'top-mid', 'center'],
@@ -51,430 +58,58 @@ define([
 
     createLayerView: function(view) {
       this._mapView = view;
-      var surface = this._mapView.surface;
-      domConstruct.place(this._displayDiv, surface);
-
-      this.bindEvents();
-
-      // this.anchorElementViewModel = new AnchorElementViewModel({
-      //   view: view
-      // });
-
-      this.anchorElementViewModel.watch(
-        'screenLocation',
-        function(location) {
-          console.log(location);
-        }.bind(this)
-      );
 
       if (view.type === '3d') {
-        // alert('not implemented for 3d');
         console.log('has performance issue on 3d');
-        // this.refresh()
-      }
-    },
-
-    _startDragPosition: null,
-    transformOffset: {
-      x: 0,
-      y: 0
-    },
-
-    calcTransform() {
-      var matrix = new window.WebKitCSSMatrix(
-        window.getComputedStyle(this._displayDiv).webkitTransform
-      );
-      var x = matrix.e;
-      var y = matrix.f;
-
-      this.transformOffset = {
-        x: x,
-        y: y
-      };
-      return this.transformOffset;
-    },
-
-    clearViewpointWatchers: function() {
-      while (this.viewpointWatchers.length) {
-        var viewpointWatcher = this.viewpointWatchers.pop();
-        if (viewpointWatcher) {
-          viewpointWatcher.remove();
-          viewpointWatcher = null;
-        }
-      }
-    },
-
-    bindEvents: function() {
-      this.events = [];
-      this.viewpointWatchers = [];
-
-      var screenTargetGeoemtry;
-      var dragStartCenter;
-
-      this.events.push(
-        watchUtils.pausable(
-          this._mapView,
-          'stationary',
-          function(isStationary, b, c, view) {
-            if (isStationary) {
-              this.clearViewpointWatchers();
-              console.log('map stationary');
-              window.requestAnimationFrame(
-                function() {
-                  this.refresh();
-                  domStyle.set(this._displayDiv, 'opacity', '1');
-                }.bind(this)
-              );
-
-              // domStyle.set(this._displayDiv, 'opacity', 1);
-            } else {
-              // domClass.add(this._displayDiv, 'not-stationary');
-              // domStyle.set(this._displayDiv, 'opacity', 0);
-            }
-          }.bind(this)
-        )
-      );
-
-      if (this._mapView.type === '2d') {
-        this.events.push(
-          this._mapView.watch(
-            'zoom',
-            function(zoom) {
-              if (parseInt(zoom) === zoom) {
-                // domClass.add(this._displayDiv, 'zooming');
-              } else {
-                domStyle.set(this._displayDiv, 'opacity', '0');
-              }
-            }.bind(this)
-          )
-        );
       }
 
-      // this.events.push(
-      //   this._mapView.watch(
-      //     'animation',
-      //     lang.hitch(this, function(response) {
-      //       if (response && response.state === 'running') {
-      //         // domStyle.set(this._displayDiv, 'opacity', 0.5);
-      //         domClass.add(this._displayDiv, 'zooming');
-      //       } else {
-      //         // domStyle.set(this._displayDiv, 'opacity', 1);
-      //         domClass.remove(this._displayDiv, 'zooming');
-      //       }
-      //     })
-      //   )
-      // );
+      this.layerView = new DomLayerView({
+        view: view,
+        layer: this
+      });
 
-      this.events.push(
-        this._mapView.on(
-          'drag',
-          lang.hitch(this, function(evt) {
-            if (evt.action === 'start') {
-              domClass.add(this._displayDiv, 'dragging');
-              console.log('drag start');
-
-              this.clearViewpointWatchers();
-
-              this.calcTransform();
-              dragStartCenter = this._mapView.center.clone();
-              screenTargetGeoemtry = this._mapView.toScreen(dragStartCenter);
-
-              screenTargetGeoemtry = {
-                x: screenTargetGeoemtry.x - this.transformOffset.x,
-                y: screenTargetGeoemtry.y - this.transformOffset.y
-              };
-
-              var calculating = false;
-
-              var viewpointWatcher = this._mapView.watch(
-                'viewpoint',
-
-                function(evt) {
-                  if (calculating) {
-                    return;
-                  }
-                  calculating = true;
-                  window.requestAnimationFrame(
-                    function() {
-                      // make this calculation faster
-                      var currentScreenTarget = this._mapView.toScreen(
-                        dragStartCenter
-                      );
-
-                      if (screenTargetGeoemtry) {
-                        var dx = currentScreenTarget.x - screenTargetGeoemtry.x;
-                        var dy = currentScreenTarget.y - screenTargetGeoemtry.y;
-                        var translate = 'translate(' + dx + 'px,' + dy + 'px)';
-
-                        domStyle.set(this._displayDiv, 'transform', translate);
-                      }
-                      calculating = false;
-                    }.bind(this)
-                  );
-                }.bind(this)
-              );
-
-              this.viewpointWatchers.push(viewpointWatcher);
-
-              this.isMapPanning = true;
-            } else if (evt.action === 'end') {
-              console.log('drag end');
-              domClass.remove(this._displayDiv, 'dragging');
-              this.isMapPanning = false;
-            }
-          })
-        )
-      );
+      return this.layerView;
     },
 
-    destroyLayerView: function(param) {
-      this.destroy();
-    },
+    destroyLayerView: function(param) {},
 
     load: function(param) {
       return this;
     },
 
-    items: [],
-    isInExtent: function(ele) {
-      return geometryEngine.contains(this._mapView.extent, ele.geometry);
-    },
-
-    refresh: function() {
-      var rbush = new window.rbush();
-      this.calcTransform();
-      console.time('refresh-domLayer');
-      // domConstruct.empty(this._displayDiv);
-      arrayUtil.forEach(
-        this.items,
-        function(v) {
-          if (this.isInExtent(v)) {
-            var notAdded = true;
-
-            if (v.box) {
-              var newPosition = this.getPosition(v);
-
-              var eleHeight = v.box.height;
-              var eleWidth = v.box.width;
-              v.box = {
-                minX: parseInt(newPosition.left),
-                minY: parseInt(newPosition.top),
-                maxX: parseInt(newPosition.left) + parseInt(eleWidth),
-                maxY: parseInt(newPosition.top) + parseInt(eleHeight),
-                height: parseFloat(eleHeight),
-                width: parseFloat(eleWidth)
-              };
-            } else {
-              notAdded = false;
-              this._add(v);
-              var box = this.getDomBox(v.node);
-
-              v.box = box;
-              domStyle.set(v.node, 'height', v.box.height + 'px');
-              domStyle.set(v.node, 'width', v.box.width + 'px');
-            }
-
-            var find = rbush.search(v.box);
-            if (find.length) {
-              domConstruct.destroy(v.node);
-              v.node = null;
-            } else {
-              // if(box.minX&&box)
-              rbush.insert(v.box);
-              if (notAdded) {
-                this._add(v);
-                domStyle.set(v.node, 'height', v.box.height + 'px');
-                domStyle.set(v.node, 'width', v.box.width + 'px');
-              }
-
-              // domStyle.set(v.node, 'display', 'block');
-            }
-            if (v.node) {
-              this._repositionForDirection(v);
-            }
-          } else {
-            if (v.node) {
-              domConstruct.destroy(v.node);
-              v.node = null;
-            }
-          }
-        },
-        this
-      );
-
-      console.timeEnd('refresh-domLayer');
-    },
-
-    getDomBox(dom) {
-      var styles = window.getComputedStyle(dom);
-
-      // getComputedStyle() should return values already in pixels, so using parseInt()
-      //   is not as much as a hack as it seems to be.
-
-      return {
-        minX: parseInt(styles.left),
-        minY: parseInt(styles.top),
-        maxX: parseInt(styles.left) + parseInt(styles.width),
-        maxY: parseInt(styles.top) + parseInt(styles.height),
-        height: parseFloat(styles.height),
-        width: parseFloat(styles.width)
-      };
-    },
-
-    _add: function(ele) {
-      if (ele.node && ele.node.parentNode === this._displayDiv) {
-        //todo
-      } else {
-        if (lang.isString(ele.dom)) {
-          ele.node = domConstruct.create(
-            'div',
-            {
-              innerHTML: ele.dom,
-              style: 'position:absolute;'
-            },
-            this._displayDiv
-          );
-        } else {
-          ele.node = domConstruct.create(
-            'div',
-            {
-              style: 'position:absolute;'
-            },
-            this._displayDiv
-          );
-          domConstruct.place(ele.dom, ele.node);
-        }
-      }
-
-      this.reposition(ele);
-    },
-
-    getPosition(ele) {
-      if (this._mapView) {
-        var sp = this._mapView.toScreen(ele.geometry);
-        sp = {
-          x: sp.x - this.transformOffset.x,
-          y: sp.y - this.transformOffset.y
-        };
-
-        return {
-          left: sp.x,
-          top: sp.y
-        };
-      }
-    },
-
-    reposition: function(ele) {
-      var position = this.getPosition(ele);
-      if (position) {
-        domStyle.set(ele.node, {
-          top: position.top + 'px',
-          left: position.left + 'px'
-        });
-      }
-    },
-
-    _repositionForDirection: function(ele) {
-      if (ele.box) {
-        var newSP = {};
-        // var computedStyle = window.getComputedStyle(ele.node);
-        var hieght = ele.box.height;
-        var width = ele.box.width;
-
-        switch (this.direction) {
-          case 'top-mid': {
-            break;
-          }
-          case 'center': {
-            domStyle.set(
-              ele.node,
-              'margin-left',
-              -parseFloat(width / 2) + 'px'
-            );
-            domStyle.set(
-              ele.node,
-              'margin-top',
-              -parseFloat(hieght / 2) + 'px'
-            );
-            break;
-          }
-          default: {
-            domStyle.set(ele.node, 'margin-top', '-' + hieght + 'px');
-            break;
-          }
-        }
-
-        return newSP;
-      }
-    },
-
     addMany(arr) {
-      if (lang.isArray(arr)) {
-        arrayUtil.forEach(
-          arr,
-          function(v) {
-            this.add(v);
-          },
-          this
-        );
-      }
+      this.graphics.addMany(arr);
     },
 
-    add: function(ele) {
-      ele = ele || {};
-
-      var defaults = {
-        geometry: null,
-        dom: ''
-      };
-
-      lang.mixin(defaults, ele);
-      this._add(defaults);
-      this.items.push(defaults);
+    add: function(graphic) {
+      this.graphics.add(graphic);
     },
 
     removeMany(arr) {
-      if (lang.isArray(arr)) {
-        arrayUtil.forEach(
-          arr,
-          function(v) {
-            this.remove(v);
-          },
-          this
-        );
-        return;
-      }
+      this.graphics.removeMany(arr);
     },
-
-    remove: function(ele) {
-      this.items = arrayUtil.filter(
-        this.items,
-        function(v) {
-          var find = ele === v;
-          if (find) {
-            domConstruct.destroy(v.node);
-          }
-
-          return !find;
-        },
-        this
-      );
-    },
-
-    removeAll: function() {
-      alert('not  implemented');
-    },
-
-    destroy: function(evt) {
-      this.items = null;
-      domConstruct.destroy(this._displayDiv);
-
-      arrayUtil.forEach(this.events, function(event) {
-        if (event.remove) {
-          event.remove();
-        }
-      });
+    remove(graphic) {
+      this.graphics.remove(graphic);
     }
+
+    // remove: function(ele) {
+    //   this.items = arrayUtil.filter(
+    //     this.items,
+    //     function(v) {
+    //       var find = ele === v;
+    //       if (find) {
+    //         domConstruct.destroy(v.node);
+    //       }
+
+    //       return !find;
+    //     },
+    //     this
+    //   );
+    // },
+
+    // removeAll: function() {
+    //   alert('not  implemented');
+    // },
   });
 
   return clazz;
