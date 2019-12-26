@@ -14,7 +14,8 @@ define([
   'esri/core/watchUtils',
 
   // 'esri/widgets/support/AnchorElementViewModel'
-  './DomLayerView',
+  './DomLayerView2D',
+  './DomLayerView3D',
   'esri/core/Collection'
 ], function(
   declare,
@@ -31,7 +32,8 @@ define([
   geometryEngine,
   watchUtils,
 
-  DomLayerView,
+  DomLayerView2D,
+  DomLayerView3D,
   Collection
   // AnchorElementViewModel
 ) {
@@ -64,22 +66,29 @@ define([
     declaredClass: 'caihm.DivLayer',
 
     createLayerView: function(view) {
-      this._mapView = view;
+      this.view = view;
 
       if (view.type === '3d') {
         console.log('has performance issue on 3d');
+        this.layerView = new DomLayerView3D({
+          view: view,
+          layer: this
+        });
+      } else {
+        this.layerView = new DomLayerView2D({
+          view: view,
+          layer: this
+        });
       }
-
-      this.layerView = new DomLayerView({
-        view: view,
-        layer: this
-      });
 
       return this.layerView;
     },
 
     destroyLayerView: function(param) {
       this.graphics = null;
+      if (this.view.type === '3d') {
+        this.layerView.destroy();
+      }
     },
 
     load: function(param) {

@@ -39,8 +39,10 @@ define([
       y: 0
     },
     constructor(param) {
-      console.log(LayerView);
-
+      this.supportsDraping = true;
+      this.overlayUpdating = false;
+      // console.log(LayerView);
+      this.elevationInfo = null;
       param.layer.on(
         'after-add',
         function(param) {
@@ -54,6 +56,10 @@ define([
           this._remove(param.item);
         }.bind(this)
       );
+    },
+
+    render(evt) {
+      console.log(evt);
     },
 
     _remove(ele) {
@@ -75,7 +81,7 @@ define([
       }
     },
     moveStart(evt) {
-      console.log('moveStart', evt);
+      // console.log('moveStart', evt);
       domClass.add(this._displayDiv, 'moving');
       this.clearViewpointWatchers();
 
@@ -90,10 +96,9 @@ define([
     },
 
     moveEnd(evt) {
-      console.log('moveEnd', evt);
+      // console.log('moveEnd', evt);
       this.clearViewpointWatchers();
       domClass.remove(this._displayDiv, 'moving');
-      //   console.log('map stationary');
       window.requestAnimationFrame(
         function() {
           this.refresh();
@@ -145,24 +150,32 @@ define([
       this.events = [];
       this.viewpointWatchers = [];
 
-      if (this.view.type === '2d') {
-        this.events.push(
-          this.view.watch(
-            'zoom',
-            function(zoom) {
-              if (parseInt(zoom) === zoom) {
-                // domClass.add(this._displayDiv, 'zooming');
-              } else {
-                domStyle.set(this._displayDiv, 'opacity', '0');
-              }
-            }.bind(this)
-          )
-        );
-      }
+      this.events.push(
+        this.view.watch(
+          'stationary',
+          function(stationary) {
+            if (stationary) {
+              domStyle.set(this._displayDiv, 'opacity', 1);
+              this.refresh();
+            } else {
+              domStyle.set(this._displayDiv, 'opacity', 0);
+            }
+          }.bind(this)
+        )
+      );
+
+      this.view.watch('camera', function(evt) {}.bind(this));
     },
 
-    attach(evt) {
-      console.log('attach', evt);
+    updateClippingExtent(evt) {
+      debugger;
+    },
+    setup(evt) {
+      debugger;
+    },
+
+    initialize(evt) {
+      console.log('initialize', this);
       this.divLayerClass = 'div-layer';
       this._displayDiv = domConstruct.create('div', {
         innerHTML: '',
@@ -177,6 +190,14 @@ define([
       //   debugger;
 
       this.refresh();
+
+      this.on('after-changes', function(evt) {
+        debugger;
+      });
+    },
+
+    doRefresh(evt) {
+      console.log('doRefresh', evt);
     },
 
     calcTransform() {
@@ -334,7 +355,7 @@ define([
       }
     },
 
-    detach() {
+    destroy() {
       domConstruct.destroy(this._displayDiv);
 
       arrayUtil.forEach(this.events, function(event) {
