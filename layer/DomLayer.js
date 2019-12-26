@@ -12,6 +12,7 @@ define([
   'dojo/dom-geometry',
   'esri/geometry/geometryEngine',
   'esri/core/watchUtils'
+  // 'esri/widgets/support/AnchorElementViewModel'
 ], function(
   declare,
   domClass,
@@ -26,6 +27,7 @@ define([
   domGeometry,
   geometryEngine,
   watchUtils
+  // AnchorElementViewModel
 ) {
   var clazz = Layer.createSubclass([], {
     constructor: function(options) {
@@ -53,6 +55,17 @@ define([
       domConstruct.place(this._displayDiv, surface);
 
       this.bindEvents();
+
+      // this.anchorElementViewModel = new AnchorElementViewModel({
+      //   view: view
+      // });
+
+      this.anchorElementViewModel.watch(
+        'screenLocation',
+        function(location) {
+          console.log(location);
+        }.bind(this)
+      );
 
       if (view.type === '3d') {
         // alert('not implemented for 3d');
@@ -95,7 +108,6 @@ define([
       this.events = [];
       this.viewpointWatchers = [];
 
-
       var screenTargetGeoemtry;
       var dragStartCenter;
 
@@ -103,22 +115,55 @@ define([
         watchUtils.pausable(
           this._mapView,
           'stationary',
-          (isStationary, b, c, view) => {
+          function(isStationary, b, c, view) {
             if (isStationary) {
               this.clearViewpointWatchers();
               console.log('map stationary');
-              window.requestAnimationFrame(() => {
-                this.refresh();
-              });
+              window.requestAnimationFrame(
+                function() {
+                  this.refresh();
+                  domStyle.set(this._displayDiv, 'opacity', '1');
+                }.bind(this)
+              );
 
               // domStyle.set(this._displayDiv, 'opacity', 1);
             } else {
               // domClass.add(this._displayDiv, 'not-stationary');
               // domStyle.set(this._displayDiv, 'opacity', 0);
             }
-          }
+          }.bind(this)
         )
       );
+
+      if (this._mapView.type === '2d') {
+        this.events.push(
+          this._mapView.watch(
+            'zoom',
+            function(zoom) {
+              if (parseInt(zoom) === zoom) {
+                // domClass.add(this._displayDiv, 'zooming');
+              } else {
+                domStyle.set(this._displayDiv, 'opacity', '0');
+              }
+            }.bind(this)
+          )
+        );
+      }
+
+      // this.events.push(
+      //   this._mapView.watch(
+      //     'animation',
+      //     lang.hitch(this, function(response) {
+      //       if (response && response.state === 'running') {
+      //         // domStyle.set(this._displayDiv, 'opacity', 0.5);
+      //         domClass.add(this._displayDiv, 'zooming');
+      //       } else {
+      //         // domStyle.set(this._displayDiv, 'opacity', 1);
+      //         domClass.remove(this._displayDiv, 'zooming');
+      //       }
+      //     })
+      //   )
+      // );
 
       this.events.push(
         this._mapView.on(
@@ -127,7 +172,7 @@ define([
             if (evt.action === 'start') {
               domClass.add(this._displayDiv, 'dragging');
               console.log('drag start');
-         
+
               this.clearViewpointWatchers();
 
               this.calcTransform();
@@ -176,7 +221,6 @@ define([
               console.log('drag end');
               domClass.remove(this._displayDiv, 'dragging');
               this.isMapPanning = false;
-        
             }
           })
         )
@@ -424,6 +468,12 @@ define([
     destroy: function(evt) {
       this.items = null;
       domConstruct.destroy(this._displayDiv);
+
+      arrayUtil.forEach(this.events, function(event) {
+        if (event.remove) {
+          event.remove();
+        }
+      });
     }
   });
 
