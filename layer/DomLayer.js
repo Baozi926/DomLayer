@@ -71,7 +71,9 @@ define([
       return this.layerView;
     },
 
-    destroyLayerView: function(param) {},
+    destroyLayerView: function(param) {
+      this.graphics = null;
+    },
 
     load: function(param) {
       return this;

@@ -46,7 +46,7 @@ define([
       });
     },
     viewChange(evt) {
-      console.log('viewChange', evt);
+      //   console.log('viewChange', evt);
 
       var currentScreenTarget = this.view.toScreen(this.dragStartCenter);
 
@@ -316,7 +316,8 @@ define([
         });
       }
     },
-    destroy: function(evt) {
+
+    detach() {
       domConstruct.destroy(this._displayDiv);
 
       arrayUtil.forEach(this.events, function(event) {
