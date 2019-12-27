@@ -96,7 +96,10 @@ define([
       window.requestAnimationFrame(
         function() {
           this.refresh();
-          domStyle.set(this._displayDiv, 'opacity', '1');
+          window.fastdom.mutate(function(){
+            domStyle.set(this._displayDiv, 'opacity', '1');
+          }.bind(this))
+       
         }.bind(this)
       );
     },
@@ -326,9 +329,14 @@ define([
     reposition: function(ele) {
       var position = this.getPosition(ele);
       if (position) {
-        domStyle.set(ele.node, {
-          top: position.top + 'px',
-          left: position.left + 'px'
+        window.fastdom.mutate(function() {
+          if(ele.node){
+            domStyle.set(ele.node, {
+              top: position.top + 'px',
+              left: position.left + 'px'
+            });
+          }
+       
         });
       }
     },
