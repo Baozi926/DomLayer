@@ -47,14 +47,30 @@
         margin: 0;
         color: 564949;
       }
+      .toolbox{
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 10px;
+      }
+      .toolbox a {
+        background: #dc7d57;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.5rem;
+        color: #fff;
+        box-shadow: 0.2px 1px 3px #888888;
+      }
     </style>
   </head>
 
   <body class="menushow">
     <div id="mapishere" class="mapishere"></div>
+    <div class="toolbox">
+      <a class="map-type-switcher" href="./index_scene.html">SceneView</a>
+    </div>
     <!-- <script type="text/javascript" src="libs/echarts.min.js"></script> -->
     <script type="text/javascript" src="libs/rbush.js"></script>
-    <script type="text/javascript" src="libs/lodash.js"></script>
+    <!-- <script type="text/javascript" src="libs/lodash.js"></script> -->
     <script type="text/javascript" src="dojoConfig.js"></script>
     <script
       type="text/javascript"
