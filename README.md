@@ -9,7 +9,7 @@
 
 文件位置：layer/DomLayer.js
 
-具有碰撞检测功能，当互相遮盖时可以自动避让
+用到了rbush来进行碰撞检测，这样当数据很多的时候html不会互相遮盖。
 
 
 
@@ -22,7 +22,7 @@ based on arcgis javascript 4.13 api
 
 a HTML-based layer based on arcgis JavaScript api 4 
 
-Collision Detection Enable
+use rbush to do the collision detection
 
 file in layer/DomLayer.js
 
