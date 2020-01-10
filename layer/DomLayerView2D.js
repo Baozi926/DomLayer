@@ -96,10 +96,7 @@ define([
       window.requestAnimationFrame(
         function() {
           this.refresh();
-          window.fastdom.mutate(function(){
-            domStyle.set(this._displayDiv, 'opacity', '1');
-          }.bind(this))
-       
+          domStyle.set(this._displayDiv, 'opacity', '1');
         }.bind(this)
       );
     },
@@ -140,7 +137,6 @@ define([
       }
 
       this.reposition(ele);
-      this._repositionForDirection(ele);
     },
 
     bindEvents: function() {
@@ -329,15 +325,16 @@ define([
     reposition: function(ele) {
       var position = this.getPosition(ele);
       if (position) {
-        window.fastdom.mutate(function() {
-          if(ele.node){
-            domStyle.set(ele.node, {
-              top: position.top + 'px',
-              left: position.left + 'px'
-            });
-          }
-       
-        });
+        if (ele.node) {
+          domStyle.set(ele.node, {
+            top: position.top + 'px',
+            left: position.left + 'px'
+          });
+          this._repositionForDirection(ele);
+        } else {
+          console.log('no node', ele);
+        }
+   
       }
     },
     detach() {
