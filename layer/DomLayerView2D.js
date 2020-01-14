@@ -69,7 +69,7 @@ define([
       if (this.screenTargetGeoemtry) {
         var dx = currentScreenTarget.x - this.screenTargetGeoemtry.x;
         var dy = currentScreenTarget.y - this.screenTargetGeoemtry.y;
-        var translate = 'translate(' + dx + 'px,' + dy + 'px)';
+        var translate = 'translate3d(' + dx + 'px,' + dy + 'px,0px)';
 
         domStyle.set(this._displayDiv, 'transform', translate);
       }
@@ -112,6 +112,7 @@ define([
     },
 
     _add: function(ele) {
+      var initStyle = 'position:absolute;will-change:transform;top:0;left:0'
       if (ele.node && ele.node.parentNode === this._displayDiv) {
         //todo
       } else {
@@ -120,7 +121,7 @@ define([
             'div',
             {
               innerHTML: ele.dom,
-              style: 'position:absolute;'
+              style: initStyle
             },
             this._displayDiv
           );
@@ -128,7 +129,7 @@ define([
           ele.node = domConstruct.create(
             'div',
             {
-              style: 'position:absolute;'
+              style: initStyle
             },
             this._displayDiv
           );
@@ -328,13 +329,14 @@ define([
         if (ele.node) {
           domStyle.set(ele.node, {
             top: position.top + 'px',
-            left: position.left + 'px'
+            left: position.left + 'px',
+            // transform:
+            //   'translate3d(' + position.left + 'px,' + position.top + 'px,0px )'
           });
           this._repositionForDirection(ele);
         } else {
           console.log('no node', ele);
         }
-   
       }
     },
     detach() {
