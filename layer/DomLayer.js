@@ -1,3 +1,11 @@
+/**
+ * 
+ * @author huimin cai 
+ * 
+ * 
+ * 
+ */
+
 define([
   'dojo/_base/declare',
   'dojo/dom-class',
